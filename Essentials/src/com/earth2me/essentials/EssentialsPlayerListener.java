@@ -275,6 +275,7 @@ public class EssentialsPlayerListener implements Listener
 						user.sendMessage(_("flyMode", _("enabled"), user.getDisplayName()));
 					}
 				}
+				user.sendMessage(_("pvpMode", user.isPvpModeEnabled() ? _("enabled") : _("disabled")));
 				user.setFlySpeed(0.1f);
 				user.setWalkSpeed(0.2f);
 

@@ -4,6 +4,8 @@ import static com.earth2me.essentials.I18n._;
 
 import com.earth2me.essentials.User;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.bukkit.Server;
@@ -29,27 +31,28 @@ public class Commandpvp extends EssentialsToggleCommand
 	@Override
 	protected void run(final Server server, final User user, final String commandLabel, final String[] args) throws Exception
 	{
-		if (args.length == 1)
-		{
-			Boolean toggle = matchToggleArgument(args[0]);
-			if (toggle == null && user.isAuthorized(othersPermission))
+			if (args.length == 1)
 			{
+				Boolean toggle = matchToggleArgument(args[0]);
+				if (toggle == null && user.isAuthorized(othersPermission))
+				{
+					toggleOtherPlayers(server, user, args);
+				}
+				else
+				{
+					User player = getPlayer(server, user, args, 0);
+					user.sendMessage(_("whoisPvp", (player.isPvpModeEnabled() ? _("true") : _("false"))));
+				}
+			}
+			else if (args.length == 2 && user.isAuthorized(othersPermission))
+			{			
 				toggleOtherPlayers(server, user, args);
 			}
 			else
 			{
-				togglePlayer(user, user, toggle);
+				user.pvpCooldown();
+				togglePlayer(user, user, null);
 			}
-		}
-		else if (args.length == 2 && user.isAuthorized(othersPermission))
-		{			
-			toggleOtherPlayers(server, user, args);
-		}
-		else
-		{
-			user.pvpCooldown();
-			togglePlayer(user, user, null);
-		}
 	}
 
 	@Override
@@ -57,12 +60,11 @@ public class Commandpvp extends EssentialsToggleCommand
 	{
 		if (enabled == null)
 		{
-			enabled = !user.isPvpModeEnabled();
+			enabled = user.isPvpModeEnabled();
 		}
 		
 		user.setPvpModeEnabled(enabled);
-
-		user.sendMessage(_("pvpMode", enabled ? _("enabled") : _("disabled")));
+		user.sendMessage(_("pvpMode", enabled ? _("enabled")+" \u00a76dans 180 secondes" : _("disabled")+" \u00a76dans 180 secondes"));
 		if (!sender.equals(user))
 		{
 			sender.sendMessage(_("pvpMode", _(enabled ? "pvpEnabledFor" : "pvpDisabledFor", user.getDisplayName())));

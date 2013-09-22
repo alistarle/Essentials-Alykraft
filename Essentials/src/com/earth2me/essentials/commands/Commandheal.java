@@ -40,7 +40,12 @@ public class Commandheal extends EssentialsCommand
 		{
 			user.healCooldown();
 		}
-		healPlayer(user);
+		
+		if(!user.isPvpModeEnabled() || user.isAuthorized("essentials.pvp.bypass")) {
+			healPlayer(user);
+		} else {
+			user.sendMessage("\u00a77Vous devez quitter le mode PvP");
+		}
 	}
 
 	@Override

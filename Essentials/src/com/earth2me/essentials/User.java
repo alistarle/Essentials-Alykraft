@@ -129,9 +129,9 @@ public class User extends UserData implements Comparable<User>, IReplyTo, IUser
 	public void pvpCooldown() throws Exception
 	{
 		final Calendar now = new GregorianCalendar();
-		if (getLastHealTimestamp() > 0)
+		final double cooldown = ess.getSettings().getPvpCooldown();
+		if (getLastPvpTimestamp() > 0)
 		{
-			final double cooldown = ess.getSettings().getPvpCooldown();
 			final Calendar cooldownTime = new GregorianCalendar();
 			cooldownTime.setTimeInMillis(getLastPvpTimestamp());
 			cooldownTime.add(Calendar.SECOND, (int)cooldown);
@@ -141,6 +141,7 @@ public class User extends UserData implements Comparable<User>, IReplyTo, IUser
 				throw new Exception(_("timeBeforePvp", DateUtil.formatDateDiff(cooldownTime.getTimeInMillis())));
 			}
 		}
+		now.add(Calendar.SECOND, (int)cooldown);
 		setLastPvpTimestamp(now.getTimeInMillis());
 	}
 

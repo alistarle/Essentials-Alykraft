@@ -47,22 +47,26 @@ public class Commandfly extends EssentialsToggleCommand
 	@Override
 	void togglePlayer(CommandSender sender, User user, Boolean enabled)
 	{
-		if (enabled == null)
-		{
-			enabled = !user.getAllowFlight();
-		}
-
-		user.setAllowFlight(enabled);
-
-		if (!user.getAllowFlight())
-		{
-			user.setFlying(false);
-		}
-
-		user.sendMessage(_("flyMode", _(enabled ? "enabled" : "disabled"), user.getDisplayName()));
-		if (!sender.equals(user))
-		{
-			sender.sendMessage(_("flyMode", _(enabled ? "enabled" : "disabled"), user.getDisplayName()));
+		if(!user.isPvpModeEnabled() || user.isAuthorized("essentials.pvp.bypass")) {
+			if (enabled == null)
+			{
+				enabled = !user.getAllowFlight();
+			}
+	
+			user.setAllowFlight(enabled);
+	
+			if (!user.getAllowFlight())
+			{
+				user.setFlying(false);
+			}
+	
+			user.sendMessage(_("flyMode", _(enabled ? "enabled" : "disabled"), user.getDisplayName()));
+			if (!sender.equals(user))
+			{
+				sender.sendMessage(_("flyMode", _(enabled ? "enabled" : "disabled"), user.getDisplayName()));
+			}
+		} else {
+			sender.sendMessage("\u00a77Vous devez quitter le mode PvP");
 		}
 	}
 }

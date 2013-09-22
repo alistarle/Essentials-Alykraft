@@ -61,6 +61,7 @@ public class Commandwhois extends EssentialsCommand
 											  ? DateUtil.formatDateDiff(user.getMuteTimeout())
 											  : _("true")
 											: _("false"))));
+		sender.sendMessage(_("whoisPvp", (user.isPvpModeEnabled() ? _("true") : _("false"))));
 
 	}
 }

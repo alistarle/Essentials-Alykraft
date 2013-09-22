@@ -1,10 +1,14 @@
 package com.earth2me.essentials;
 
 import static com.earth2me.essentials.I18n._;
+import com.earth2me.essentials.utils.DateUtil;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+
 import org.bukkit.Material;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -79,27 +83,46 @@ public class EssentialsEntityListener implements Listener
 			event.setCancelled(true);
 		}
 
-		/*if (attacker.isGodModeEnabled() && !attacker.isAuthorized("essentials.god.pvp"))
+		if (attacker.isGodModeEnabled() && !attacker.isAuthorized("essentials.god.pvp"))
 		{
 			event.setCancelled(true);
-		}*/
+		}
 		
-		if (attacker.isGodModeEnabled() /* || attacker.isFlyModeEnabled */) {
+		/*if (attacker.isGodModeEnabled() || attacker.isFlyModeEnabled) {
 			attacker.sendMessage("Votre god vous a ete retire");
 			attacker.setGodModeEnabled(false);
 			//On reset le heal/god/fly cooldown
-		}
+		}*/
 
 		if (attacker.isHidden() && !attacker.isAuthorized("essentials.vanish.pvp"))
 		{
 			event.setCancelled(true);
 		}
 		
-		if (ess.getUser(defender).isPvpModeEnabled() && !attacker.isAuthorized("essentials.pvp.bypass"))
+		if (!ess.getUser(defender).isPvpModeEnabled() && !attacker.isAuthorized("essentials.pvp.bypass"))
 		{
-			attacker.sendMessage("Cet homme ne d\u00e9sire pas se battre");
+			attacker.sendMessage("\u00a7eCe joueur ne d\u00e9sire pas se battre");
 			event.setCancelled(true);
 		}
+		
+		final Calendar now = new GregorianCalendar();
+		final Calendar cooldownTime = new GregorianCalendar();
+		
+		if (!attacker.isPvpModeEnabled() && !attacker.isAuthorized("essentials.pvp.bypass"))
+		{
+			if (now.getTimeInMillis() <= attacker.getLastPvpTimestamp()) {
+				cooldownTime.setTimeInMillis(attacker.getLastPvpTimestamp());
+				attacker.sendMessage("\u00a7eVous devez attendre "+DateUtil.formatDateDiff(cooldownTime.getTimeInMillis())+" avant de pouvoir PvP");
+			} else {
+				attacker.sendMessage("\u00a7eVous ne pouvez pas vous battre en mode non-PvP");
+			}
+			event.setCancelled(true);
+		}
+		
+		if (now.getTimeInMillis() <= ess.getUser(defender).getLastPvpTimestamp() && ess.getUser(defender).isPvpModeEnabled()) {
+			cooldownTime.setTimeInMillis(ess.getUser(defender).getLastPvpTimestamp());
+			ess.getUser(defender).sendMessage("\u00a7eVous devez attendre "+DateUtil.formatDateDiff(cooldownTime.getTimeInMillis())+" avant que votre PvP ne soit d\u00e9sactiv\u00e9");
+		}		
 
 		onPlayerVsPlayerPowertool(event, defender, attacker);
 	}

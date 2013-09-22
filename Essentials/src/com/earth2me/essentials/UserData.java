@@ -418,7 +418,7 @@ public abstract class UserData extends PlayerExtension implements IConf
 
 	public void setLastPvpTimestamp(long time)
 	{
-		lastHealTimestamp = time;
+		lastPvpTimestamp = time;
 		config.setProperty("timestamps.lastpvp", time);
 		config.save();
 	}
@@ -427,16 +427,18 @@ public abstract class UserData extends PlayerExtension implements IConf
 
 	private boolean _getPvpModeEnabled()
 	{
-		return config.getBoolean("pvp", false);
+		return config.getBoolean("pvp", true);
 	}
 
 	public boolean isPvpModeEnabled()
 	{
-		return pvp;
+		final Calendar now = new GregorianCalendar();
+		return (now.getTimeInMillis() >= lastPvpTimestamp) ? pvp : !pvp;
 	}
 
 	public void setPvpModeEnabled(boolean set)
 	{
+		this.setGodModeEnabled(false);
 		pvp = set;
 		config.setProperty("pvp", set);
 		config.save();

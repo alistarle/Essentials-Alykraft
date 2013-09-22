@@ -47,23 +47,27 @@ public class Commandgod extends EssentialsToggleCommand
 	@Override
 	void togglePlayer(CommandSender sender, User user, Boolean enabled)
 	{
-		if (enabled == null)
-		{
-			enabled = !user.isGodModeEnabled();
-		}
-		
-		user.setGodModeEnabled(enabled);
-
-		if (enabled && user.getHealth() != 0)
-		{
-			user.setHealth(user.getMaxHealth());
-			user.setFoodLevel(20);
-		}
-
-		user.sendMessage(_("godMode", enabled ? _("enabled") : _("disabled")));
-		if (!sender.equals(user))
-		{
-			sender.sendMessage(_("godMode", _(enabled ? "godEnabledFor" : "godDisabledFor", user.getDisplayName())));
+		if(!user.isPvpModeEnabled() || user.isAuthorized("essentials.pvp.bypass")) {
+			if (enabled == null)
+			{
+				enabled = !user.isGodModeEnabled();
+			}
+			
+			user.setGodModeEnabled(enabled);
+	
+			if (enabled && user.getHealth() != 0)
+			{
+				user.setHealth(user.getMaxHealth());
+				user.setFoodLevel(20);
+			}
+	
+			user.sendMessage(_("godMode", enabled ? _("enabled") : _("disabled")));
+			if (!sender.equals(user))
+			{
+				sender.sendMessage(_("godMode", _(enabled ? "godEnabledFor" : "godDisabledFor", user.getDisplayName())));
+			}
+		} else {
+			sender.sendMessage("\u00a77Vous devez quitter le mode PvP");
 		}
 	}
 }
